@@ -9,7 +9,7 @@ const config = {
   authRequired: false,
   auth0Logout: true,
   secret: process.env.SECRET,
-  baseURL: "https://plantsaplenty.onrender.com/",
+  baseURL: process.env.BASEURL,
   clientID: process.env.CLIENTID,
   issuerBaseURL: process.env.ISSUERBASEURL
 };
