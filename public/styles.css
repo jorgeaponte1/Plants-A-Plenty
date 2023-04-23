@@ -144,6 +144,29 @@ p {
   padding: 20px;
 }
 
+/* Possible additional changes on the cart style */
+/* .cart-header {
+  background-color: rgba(7, 96, 78, 1);
+  color: wheat;
+  border: 5px solid wheat;
+}
+
+#remove {
+  color: wheat;
+}
+
+.cart-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(7, 96, 78, 1);
+  color: wheat;
+  font-size: 30px;
+  padding: 20px;
+  border: 5px solid wheat;
+}
+*/
+
 #remove {
   margin-right: 10px;
   color: #fff;
