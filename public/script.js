@@ -9,6 +9,38 @@ window.onscroll = function () {
     navbar.classList.remove("scrolled");
   }
 };
+
+
+
+//----------Toggle responsive--------------
+const toggleBtn = document.querySelector('.toggle-btn');
+console.log(toggleBtn); // Add this line to check if toggleBtn is null
+const toggleBtnIcon = document.querySelector('.toggle-btn i');
+console.log(toggleBtnIcon); // Add this line to check if toggleBtnIcon is null
+const dropDownMenu = document.querySelector('.dropdown_menu');
+console.log(dropDownMenu); // Add this line to check if dropDownMenu is null
+
+toggleBtn.onclick = function () {
+  dropDownMenu.classList.toggle('open');
+  const isOpen = dropDownMenu.classList.contains('open');
+
+  toggleBtnIcon.classList = isOpen
+  ? 'fa-solid fa-xmark'
+  : 'fa-solid fa-bars';
+}
+
+function closeDropDownMenu() {
+  dropDownMenu.classList.remove('open');
+}
+
+
+window.addEventListener('resize', function () {
+  if (dropDownMenu.classList.contains('open') && window.innerWidth > 768) {
+    closeDropDownMenu();
+  }})
+
+
+
 //------------------------------------------
 
 let cart = document.getElementById("cart");
@@ -16,7 +48,7 @@ let add = document.getElementById("cartbtn");
 let remove = document.getElementById("remove");
 let cartButtons = document.querySelectorAll(".cart");
 let buyNowButton = document.querySelectorAll(".buy");
-let removeButton = document.querySelector('.remove-item');
+let removeButton = document.querySelector(".remove-item");
 
 async function fetchPlantDetails(plantID) {
   try {
@@ -117,14 +149,13 @@ function updateCartUI(cartData) {
     subtotalElement.style.display = "none";
     checkout.style.display = "none";
   } else {
-    // update the subtotal
-    subtotalElement.innerHTML = `<h2>Cart Subtotal: $${subtotal.toFixed(2)}</h2>`;
     subtotalElement.style.display = "block";
+    subtotalElement.innerHTML = `<h2>Cart Subtotal: $${subtotal.toFixed(2)}</h2>`;
     checkout.style.display = "block";
   }
 
   // update the cart-notification total displayed
-  const carttotalElement = document.querySelector('.cart-notification')
+  const carttotalElement = document.querySelector('.cart-notification');
   carttotalElement.setAttribute('data-product-count', totalQuantity);
 }
 
@@ -228,7 +259,10 @@ buyNowButton.forEach((button) => {
 });
 
 // To open the cart on click
-add.addEventListener("click", () => cart.classList.add("active"));
+add.addEventListener("click", async () => {
+  await fetchCart(); // Fetch the latest cart data before opening the cart
+  cart.classList.add("active");
+});
 
 // To close the cart on click
 remove.addEventListener("click", () => cart.classList.remove("active"));
@@ -273,6 +307,13 @@ function closebox() {
   });
 }
 
+previewBox.forEach((close) => {
+  close.querySelector(".fa-times").onclick = () => {
+    close.classList.remove("active");
+    previewContainer.style.display = "none";
+  };
+});
+
 //increment the qty
 async function incrementItem(plantID) {
   try {
@@ -311,17 +352,6 @@ async function decrementItem(plantID) {
   }
 }
 
-socket.on("cartUpdated", (cartData) => {
-  updateCartUI(cartData);
-});
-
-previewBox.forEach((close) => {
-  close.querySelector(".fa-times").onclick = () => {
-    close.classList.remove("active");
-    previewContainer.style.display = "none";
-  };
-});
-
 document.getElementById("checkout").addEventListener("click", async () => {
   try {
     const response = await fetch("/create-checkout-session", {
@@ -329,15 +359,18 @@ document.getElementById("checkout").addEventListener("click", async () => {
       headers: { "Content-Type": "application/json" },
     });
 
-    if(response.ok) {
-      const url = await response.json()
+    if (response.ok) {
+      const url = await response.json();
       window.location.href = url.url;
-    }
-    else{
-      console.error('Failed to create checkout session')
+    } else {
+      console.error("Failed to create checkout session");
     }
   } catch (error) {
     console.error(error.message);
   }
   console.log("Checkout");
+});
+
+socket.on("cartUpdated", (cartData) => {
+  updateCartUI(cartData);
 });
